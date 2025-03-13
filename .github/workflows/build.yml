@@ -1,4 +1,4 @@
-name: Análisis CI con SonarCloud
+name: Análisis CI con SonarCloud y Deploy (CD) S3 
 
 on:
   push:
@@ -33,14 +33,12 @@ jobs:
         run: |
           npm run test -- --no-watch --code-coverage --browsers=ChromeHeadless  # 📊 Genera reporte de cobertura
 
-          - name: 🔍 Escanear código con SonarCloud
-          uses: SonarSource/sonarcloud-github-action@v2
-          with:
-            projectKey: ${{ secrets.SONAR_PROJECT_KEY }}
-            organization: ${{ secrets.SONAR_ORGANIZATION }}
-          env:
-            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        
+      - name: 🔍 Escanear código con SonarCloud
+        uses: SonarSource/sonarqube-scan-action@v4
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
+          SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
 
       - name: 🛑 Verificar resultado de SonarCloud
         id: sonarcloud-check
@@ -62,13 +60,6 @@ jobs:
           fi
 
 
-
- 
-          
-          
-          
-          
-          
           
           
           
