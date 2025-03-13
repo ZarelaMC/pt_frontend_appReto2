@@ -1,4 +1,4 @@
-name: Análisis CI con SonarCloud y Deploy (CD) S3 
+name: Análisis CI con SonarCloud
 
 on:
   push:
@@ -37,8 +37,6 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v4
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
-          SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
 
       - name: 🛑 Verificar resultado de SonarCloud
         id: sonarcloud-check
@@ -59,7 +57,7 @@ jobs:
             exit 1  # 💥 Fuerza el fallo del job
           fi
 
-          
+
 
  
           
