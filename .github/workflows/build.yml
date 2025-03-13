@@ -33,10 +33,14 @@ jobs:
         run: |
           npm run test -- --no-watch --code-coverage --browsers=ChromeHeadless  # 📊 Genera reporte de cobertura
 
-      - name: 🔍 Escanear código con SonarCloud
-        uses: SonarSource/sonarqube-scan-action@v4
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          - name: 🔍 Escanear código con SonarCloud
+          uses: SonarSource/sonarcloud-github-action@v2
+          with:
+            projectKey: ${{ secrets.SONAR_PROJECT_KEY }}
+            organization: ${{ secrets.SONAR_ORGANIZATION }}
+          env:
+            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        
 
       - name: 🛑 Verificar resultado de SonarCloud
         id: sonarcloud-check
