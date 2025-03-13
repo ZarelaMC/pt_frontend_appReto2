@@ -1,0 +1,7 @@
+organization=zarelamc
+projectKey=ZarelaMC_pt_frontend_appReto2
+serverUrl=https://sonarcloud.io
+serverVersion=8.0.0.60604
+dashboardUrl=https://sonarcloud.io/dashboard?id=ZarelaMC_pt_frontend_appReto2
+ceTaskId=AZWM4c_qP0poTQ6IPePe
+ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AZWM4c_qP0poTQ6IPePe
