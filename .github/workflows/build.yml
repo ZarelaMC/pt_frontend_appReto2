@@ -40,29 +40,42 @@ jobs:
           SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
           SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
 
+      - name: 📂 Verificar si se generó lcov.info
+        run: ls -l coverage/lcov.info || echo "❌ lcov.info no encontrado"
+
       - name: 🛑 Verificar resultado de SonarCloud
-        id: sonarcloud-check
         run: |
           SONAR_PROJECT_KEY=${{ secrets.SONAR_PROJECT_KEY }}
           SONAR_TOKEN=${{ secrets.SONAR_TOKEN }}
           SONAR_URL="https://sonarcloud.io/api/qualitygates/project_status?projectKey=${SONAR_PROJECT_KEY}"
 
-          RESPONSE=$(curl -s -u "${SONAR_TOKEN}:" "${SONAR_URL}")
-          STATUS=$(echo "${RESPONSE}" | jq -r '.projectStatus.status')
+          echo "⌛ Esperando a que el análisis de SonarCloud esté disponible..."
+          MAX_RETRIES=10
+          RETRY_DELAY=10
+          COUNTER=0
+          STATUS="NONE"
 
-          if [ "${STATUS}" == "OK" ]; then
+          while [ "$COUNTER" -lt "$MAX_RETRIES" ]; do
+            RESPONSE=$(curl -s -u "${SONAR_TOKEN}:" "${SONAR_URL}")
+            STATUS=$(echo "${RESPONSE}" | jq -r '.projectStatus.status')
+
+            if [ "$STATUS" != "null" ] && [ "$STATUS" != "NONE" ]; then
+              echo "🔍 Estado del análisis recibido: $STATUS"
+              break
+            fi
+
+            echo "⏳ Aún no disponible... Reintentando ($((COUNTER+1))/$MAX_RETRIES)"
+            sleep "$RETRY_DELAY"
+            ((COUNTER++))
+          done
+
+          if [ "$STATUS" == "OK" ]; then
             echo "✅ El análisis de SonarCloud ha pasado correctamente."
           else
-            echo "❌ El análisis de SonarCloud ha fallado."
+            echo "❌ El análisis de SonarCloud ha fallado o no se pudo recuperar el estado."
             echo "Detalles del fallo:"
             echo "${RESPONSE}" | jq '.projectStatus.conditions'
-            exit 1  # 💥 Fuerza el fallo del job
+            exit 1
           fi
-
-
-          
-          
-          
-
-
+      
       
